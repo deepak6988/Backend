@@ -26,7 +26,7 @@ const registerUser = asyncHandler( async (req,res) => {
     
     // console.log("email : ", email);
 
-   const existingUser = User.findOne({
+   const existingUser = await User.findOne({
     $or : [{username},{email}]
    })    
 

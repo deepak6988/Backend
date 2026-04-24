@@ -65,7 +65,7 @@ userSchema.methods.generateaccesstoken = function(){
             fullName : this.fullName,
             username : this.username
         },
-        process.env.ACCESS_TOKEN_SECRECT,
+        process.env.ACCESS_TOKEN_SECRET,
         {
             expiresIn : process.env.ACCESS_TOKEN_EXPIRY
         }
@@ -78,7 +78,7 @@ userSchema.methods.generaterefreshtoken = function(){
             _id : this._id,
             
         },
-        process.env.REFRESH_TOKEN_SECRECT,
+        process.env.REFRESH_TOKEN_SECRET,
         {
             expiresIn : process.env.REFRESH_TOKEN_EXPIRY
         }

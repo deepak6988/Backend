@@ -3,6 +3,7 @@ import {ApiError} from "../Utils/ApiError.js"
 import {User} from "../Models/User.models.js"
 import {uploadOnCloudinary} from "../Utils/cloudinary.js"
 import {ApiResponse} from "../Utils/ApiResponse.js"
+import fs from "fs"
 
 
 const registerUser = asyncHandler( async (req,res) => {
@@ -30,12 +31,21 @@ const registerUser = asyncHandler( async (req,res) => {
     $or : [{username},{email}]
    })    
 
-   if(existingUser){
-    throw new ApiError(409,"User already exist");
-   }
+   
 
    const avatarlocal = req.files?.avatar[0]?.path;
-   const coverlocal = req.files?.coverImage[0]?.path;
+  //  const coverlocal = req.files?.coverImage[0]?.path;
+
+   let coverlocal;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverlocal = req.files.coverImage[0].path
+    }
+
+    if(existingUser){
+    fs.unlinkSync(avatarlocal);
+    fs.unlinkSync(coverlocal);
+    throw new ApiError(409,"User already exist");
+   }
 
    if(!avatarlocal){
     throw new ApiError(400,"Avatar file is required");
@@ -44,9 +54,11 @@ const registerUser = asyncHandler( async (req,res) => {
   const avatar = await uploadOnCloudinary(avatarlocal);
   const coverImage = await uploadOnCloudinary(coverlocal);
 
+
   if(!avatar){
     throw new ApiError(400,"Avatar file is required");
   }
+
 
   const user = await User.create({
     fullName,
